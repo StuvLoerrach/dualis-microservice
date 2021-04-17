@@ -1,10 +1,10 @@
 package main
 
 import (
+	"dhbw-loerrach.de/dualis/microservice/internal/api/restapi"
 	"dhbw-loerrach.de/dualis/microservice/internal/endpoint"
 	"dhbw-loerrach.de/dualis/microservice/internal/handle"
 	"github.com/go-openapi/loads"
-	"github.com/go-swagger/go-swagger/examples/oauth2/restapi"
 )
 
 //go:generate go run github.com/go-swagger/go-swagger/cmd/swagger generate server --exclude-main --target ../internal/api --spec ../api/definition.yaml

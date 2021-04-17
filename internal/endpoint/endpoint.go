@@ -21,7 +21,7 @@ var db *sql.DB
 
 // LoadService reads the settings.json file
 func LoadService() {
-	file, err := ioutil.ReadFile("internal/settings.json")
+	file, err := ioutil.ReadFile("../internal/settings.json")
 
 	if err != nil {
 		log.Fatal(err)
@@ -51,6 +51,9 @@ func LoadServiceFromJSON(file []byte) {
 
 func CreateDBClient() {
 	var err error
+
+	fmt.Println("Username")
+	fmt.Println(dbUsername)
 
 	connection := fmt.Sprintf("%s:%s@%s/%s", dbUsername, dbPassword, dbHost, dbName)
 

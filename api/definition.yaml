@@ -43,7 +43,7 @@ paths:
           type: integer
         - in: query
           name: organization
-          type: string
+          type: integer
         - in: query
           name: email
           type: string
@@ -94,7 +94,7 @@ definitions:
         type: "string"
         description: "Email of the student"
       organization:
-        type: "string"
+        type: "integer"
         description: "DHBW organization of the student"
   StudentList:
     type: "object"
