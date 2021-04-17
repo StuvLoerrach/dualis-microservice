@@ -1,0 +1,117 @@
+swagger: "2.0"
+info:
+  description: "A microservice written in Go which provides the data for the Dualis feature of DHBW Lörrach Campus App"
+  version: "1.0.0"
+  title: "dualis-microservice"
+  contact:
+    email: "kaiseand@dhbw-loerrach.de"
+schemes:
+- "http"
+paths:
+  /login/:
+    post:
+      summary: "Performs a login"
+      operationId: "login"
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      parameters:
+        - in: body
+          name: login
+          required: true
+          schema:
+            $ref: "#/definitions/LoginRequest"
+      responses:
+        200:
+          description: "Login successful"
+          schema:
+            $ref: "#/definitions/LoginResponse"
+        500:
+          description: "An error occured"
+          schema:
+            $ref: "#/definitions/SimpleError"
+  /students/:
+    get:
+      summary: "Gets DHBW students with various filters"
+      operationId: "students"
+      consumes:
+        - application/json
+      parameters:
+        - in: query
+          name: studentId
+          type: integer
+        - in: query
+          name: organization
+          type: string
+        - in: query
+          name: email
+          type: string
+      produces:
+        - application/json
+      responses:
+        200:
+          description: "Got student(s) successfully!"
+          schema:
+            $ref: "#/definitions/StudentList"
+        204:
+          description: "No student matches this criteria!"
+        500:
+          description: "Couldn't get student(s)!"
+          schema:
+            $ref: "#/definitions/SimpleError"
+definitions:
+  LoginRequest:
+    type: "object"
+    required:
+      - email
+      - password
+    properties:
+      email:
+        type: "string"
+      password:
+        type: "string"
+  LoginResponse:
+    type: "object"
+    required:
+      - jwt
+    properties:
+      jwt:
+        type: "string"
+        minLength: 1
+        description: "A JSON Web Token which can be used to authenticate"
+  Student:
+    type: "object"
+    required:
+      - id
+      - email
+      - organization
+    properties:
+      id:
+        type: "integer"
+        description: "Id of the student"
+      email:
+        type: "string"
+        description: "Email of the student"
+      organization:
+        type: "string"
+        description: "DHBW organization of the student"
+  StudentList:
+    type: "object"
+    required:
+      - students
+    properties:
+      students:
+        type: "array"
+        items:
+          $ref: "#/definitions/Student"
+        description: "A list of DHBW students"
+  SimpleError:
+    type: "object"
+    required: 
+      - error
+    properties:
+      error:
+        type: "string"
+        description: "An error message"
+
