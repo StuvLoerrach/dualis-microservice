@@ -9,6 +9,8 @@ import (
 	"log"
 
 	"dhbw-loerrach.de/dualis/microservice/internal"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 var tokenSecret []byte
@@ -52,13 +54,10 @@ func LoadServiceFromJSON(file []byte) {
 func CreateDBClient() {
 	var err error
 
-	fmt.Println("Username")
-	fmt.Println(dbUsername)
-
 	connection := fmt.Sprintf("%s:%s@%s/%s", dbUsername, dbPassword, dbHost, dbName)
 
 	db, err = sql.Open("mysql", connection)
 	if err != nil {
-		log.Printf("Failed to connect to database!")
+		log.Printf("Failed to connect to database! %v", err)
 	}
 }

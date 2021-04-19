@@ -42,7 +42,7 @@ paths:
           name: studentId
           type: integer
         - in: query
-          name: organization
+          name: course
           type: integer
         - in: query
           name: email
@@ -85,7 +85,7 @@ definitions:
     required:
       - id
       - email
-      - organization
+      - course
     properties:
       id:
         type: "integer"
@@ -93,9 +93,9 @@ definitions:
       email:
         type: "string"
         description: "Email of the student"
-      organization:
+      course:
         type: "integer"
-        description: "DHBW organization of the student"
+        description: "DHBW course of the student"
   StudentList:
     type: "object"
     required:
