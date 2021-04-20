@@ -10,6 +10,7 @@ import (
 func InitializeHandlers(swaggerSpec *loads.Document) *operations.DualisMicroserviceAPI {
 	api := operations.NewDualisMicroserviceAPI(swaggerSpec)
 	api.StudentsHandler = operations.StudentsHandlerFunc(endpoint.HandleStudents)
+	api.StudentPerformanceHandler = operations.StudentPerformanceHandlerFunc(endpoint.HandleStudentPerformance)
 
 	return api
 }

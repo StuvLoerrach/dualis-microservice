@@ -20,6 +20,7 @@ func main() {
 	}
 
 	api := handle.InitializeHandlers(swaggerSpec)
+	api.UseSwaggerUI()
 
 	server := restapi.NewServer(api)
 	server.EnabledListeners = []string{"unix", "http"}

@@ -60,6 +60,36 @@ paths:
           description: "Couldn't get student(s)!"
           schema:
             $ref: "#/definitions/SimpleError"
+  /student/performance/:
+    get:
+      summary: "Gets DHBW students performances with various filters"
+      operationId: "studentPerformance"
+      consumes:
+        - application/json
+      parameters:
+        - in: query
+          name: studentId
+          type: integer
+          required: true
+        - in: query
+          name: isWintersemester
+          type: boolean
+        - in: query
+          name: year
+          type: string
+      produces:
+        - application/json
+      responses:
+        200:
+          description: "Got the students performances successfully!"
+          schema:
+            $ref: "#/definitions/PerformancesList"
+        204:
+          description: "No performances found for this criteria!"
+        500:
+          description: "Couldn't get performances!"
+          schema:
+            $ref: "#/definitions/SimpleError"
 definitions:
   LoginRequest:
     type: "object"
@@ -80,6 +110,86 @@ definitions:
         type: "string"
         minLength: 1
         description: "A JSON Web Token which can be used to authenticate"
+  Enrollment:
+    type: "object"
+    required:
+      - status
+      - semester
+      - moduleResult
+    properties:
+      grade:
+        type: "string"
+        description: "Grade of the student for this module"
+      status:
+        type: "string"
+        description: "Status of the evaluation"
+      semester:
+        type: "string"
+        description: "Semester when the enrollment took place"
+      moduleResult:
+        type: "array"
+        maxItems: 1
+        items:
+          $ref: "#/definitions/ModuleResult"
+        description: "Module that was enrolled in"
+  LectureResult:
+    type: "object"
+    required:
+      - number
+      - name
+      - weighting
+      - examType
+    properties:
+      number:
+        type: "string"
+        description: "Lecture number"
+      name:
+        type: "string"
+        description: "Name of the lecture"
+      weighting:
+        type: "string"
+        description: "How much the lecture weights in the module"
+      examType:
+        type: "string"
+        description: "Type of the exam"
+      grade:
+        type: "string"
+        description: "Grade of the student for this lecture"
+      presence:
+        type: "boolean"
+        description: "Whether the student was present enough to complete the lecture"
+  ModuleResult:
+    type: "object"
+    required:
+      - number
+      - name
+      - credits
+      - lectureResults
+    properties:
+      number:
+        type: "string"
+        description: "Module number"
+      name:
+        type: "string"
+        description: "Name of the module"
+      credits:
+        type: "string"
+        description: "How many credits the module is worth"
+      lectureResults:
+        type: "array"
+        items:
+          $ref: "#/definitions/LectureResult"
+        description: "Results in the corresponding lectures"
+  PerformancesList:
+    type: "object"
+    required:
+      - enrollments
+    properties:
+      enrollments:
+        type: "array"
+        items:
+          $ref: "#/definitions/Enrollment"
+        description: "A list of enrollments"
   Student:
     type: "object"
     required:
