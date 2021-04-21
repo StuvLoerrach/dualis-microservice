@@ -53,8 +53,6 @@ func HandleStudentPerformance(params operations.StudentPerformanceParams) middle
 		values = append(values, *pVal)
 	}
 
-	fmt.Println("SELECT enrollment.id, grade, status, is_wintersemester, year, no, name, credits from enrollment INNER JOIN semester ON enrollment.semester_fk = semester.id INNER JOIN module ON enrollment.module_fk = module.id WHERE " + strings.Join(where, " AND "))
-
 	rows, err := db.Query("SELECT enrollment.id, grade, status, is_wintersemester, year, no, name, credits from enrollment INNER JOIN semester ON enrollment.semester_fk = semester.id INNER JOIN module ON enrollment.module_fk = module.id WHERE "+strings.Join(where, " AND "), values...)
 
 	if err != nil {
