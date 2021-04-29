@@ -8,7 +8,8 @@ import (
 
 // DualisClaims extends StandardClaims
 type DualisClaims struct {
-	StudentID      int                `json:"studentid,omitempty"`
+	StudentID      int64              `json:"studentid,omitempty"`
+	StudentCourse  int64              `json:"studentcourse,omitempty"`
 	StandardClaims jwt.StandardClaims `json:"standardclaims,omitempty"`
 }
 

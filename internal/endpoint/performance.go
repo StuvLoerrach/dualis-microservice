@@ -4,12 +4,13 @@ import (
 	"fmt"
 	"strings"
 
+	"dhbw-loerrach.de/dualis/microservice/internal"
 	"dhbw-loerrach.de/dualis/microservice/internal/api/models"
 	"dhbw-loerrach.de/dualis/microservice/internal/api/restapi/operations"
 	"github.com/go-openapi/runtime/middleware"
 )
 
-func HandleStudentPerformance(params operations.StudentPerformanceParams) middleware.Responder {
+func HandleStudentPerformance(params operations.StudentPerformanceParams, principal interface{}) middleware.Responder {
 
 	var (
 		enrollmentId     int64
@@ -34,7 +35,8 @@ func HandleStudentPerformance(params operations.StudentPerformanceParams) middle
 	enrollments := []*models.Enrollment{}
 	performancesList := models.PerformancesList{}
 
-	filterableValues := map[string]interface{}{"student_fk": params.StudentID}
+	claims := principal.(*internal.DualisClaims)
+	filterableValues := map[string]interface{}{"student_fk": claims.StudentID}
 
 	if params.IsWintersemester != nil {
 		filterableValues["is_wintersemester"] = *params.IsWintersemester

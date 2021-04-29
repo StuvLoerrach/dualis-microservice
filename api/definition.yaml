@@ -60,6 +60,8 @@ paths:
           description: "Couldn't get student(s)!"
           schema:
             $ref: "#/definitions/SimpleError"
+      security:
+      - dualis_key: []
   /student/performance/:
     get:
       summary: "Gets DHBW students performances with various filters"
@@ -67,10 +69,6 @@ paths:
       consumes:
         - application/json
       parameters:
-        - in: query
-          name: studentId
-          type: integer
-          required: true
         - in: query
           name: isWintersemester
           type: boolean
@@ -90,6 +88,13 @@ paths:
           description: "Couldn't get performances!"
           schema:
             $ref: "#/definitions/SimpleError"
+      security:
+      - dualis_key: []
+securityDefinitions:
+  dualis_key:
+    type: "apiKey"
+    name: "x-api-key"
+    in: "header"
 definitions:
   LoginRequest:
     type: "object"

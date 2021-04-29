@@ -11,7 +11,7 @@ import (
 )
 
 // HandleStudents finds students by various criteria
-func HandleStudents(params operations.StudentsParams) middleware.Responder {
+func HandleStudents(params operations.StudentsParams, principal interface{}) middleware.Responder {
 
 	var (
 		id     int64
