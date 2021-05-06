@@ -10,6 +10,7 @@ import (
 type DualisClaims struct {
 	StudentID      int64              `json:"studentid,omitempty"`
 	StudentCourse  int64              `json:"studentcourse,omitempty"`
+	Organization   int64              `json:"organization,omitempty"`
 	StandardClaims jwt.StandardClaims `json:"standardclaims,omitempty"`
 }
 

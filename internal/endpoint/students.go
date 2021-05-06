@@ -19,7 +19,6 @@ func HandleStudents(params operations.StudentsParams, principal interface{}) mid
 		course int64
 	)
 
-	var errMsg *string
 	students := []*models.Student{}
 	studentList := models.StudentList{}
 
@@ -39,11 +38,11 @@ func HandleStudents(params operations.StudentsParams, principal interface{}) mid
 		where = append(where, "id IS NOT NULL")
 	}
 
-	rows, err := db.Query("SELECT id, email, course_fk FROM dualis.student WHERE "+strings.Join(where, " AND "), values...)
+	rows, err := db.Query("SELECT id, email, course_fk FROM student WHERE "+strings.Join(where, " AND "), values...)
 
 	if err != nil {
-		*errMsg = err.Error()
-		return operations.NewStudentsInternalServerError().WithPayload(&models.SimpleError{Error: errMsg})
+		errMsg := err.Error()
+		return operations.NewStudentsInternalServerError().WithPayload(&models.SimpleError{Error: &errMsg})
 	}
 
 	defer rows.Close()
@@ -53,8 +52,8 @@ func HandleStudents(params operations.StudentsParams, principal interface{}) mid
 		err = rows.Scan(&id, &email, &course)
 
 		if err != nil {
-			*errMsg = err.Error()
-			return operations.NewStudentsInternalServerError().WithPayload(&models.SimpleError{Error: errMsg})
+			errMsg := err.Error()
+			return operations.NewStudentsInternalServerError().WithPayload(&models.SimpleError{Error: &errMsg})
 		}
 
 		idVal := id

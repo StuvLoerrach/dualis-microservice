@@ -20,11 +20,12 @@ func HandleLogin(params operations.LoginParams) middleware.Responder {
 		email    string
 		password string
 		courseFk int64
+		orgId    int64
 
 		hadNext bool
 	)
 
-	rows, err := db.Query("SELECT * FROM dualis.student WHERE email = ?", *params.Login.Email)
+	rows, err := db.Query("SELECT student.id, student.email, student.password, student.course_fk, organization.id FROM student INNER JOIN course ON student.course_fk = course.id INNER JOIN organization ON course.organization_fk = organization.id WHERE email = ?", *params.Login.Email)
 
 	if err != nil {
 		errMsg := err.Error()
@@ -36,7 +37,7 @@ func HandleLogin(params operations.LoginParams) middleware.Responder {
 	hadNext = false
 
 	for rows.Next() {
-		err = rows.Scan(&id, &email, &password, &courseFk)
+		err = rows.Scan(&id, &email, &password, &courseFk, &orgId)
 
 		if err != nil {
 			errMsg := err.Error()
@@ -52,11 +53,11 @@ func HandleLogin(params operations.LoginParams) middleware.Responder {
 	}
 
 	if password != *params.Login.Password {
-		errMsg := fmt.Sprintf("Couldn't get authenticated!")
+		errMsg := "Couldn't get authenticated!"
 		return operations.NewLoginInternalServerError().WithPayload(&models.SimpleError{Error: &errMsg})
 	}
 
-	dualisToken, err := generateDualisToken(id, email, password, courseFk)
+	dualisToken, err := generateDualisToken(id, email, password, courseFk, orgId)
 
 	if err != nil {
 		errMsg := fmt.Sprintf("Couldn't generate Dualis token: %v", err)
@@ -69,11 +70,12 @@ func HandleLogin(params operations.LoginParams) middleware.Responder {
 
 }
 
-func generateDualisToken(studentId int64, email string, password string, courseFk int64) (string, error) {
+func generateDualisToken(studentId int64, email string, password string, courseFk int64, orgId int64) (string, error) {
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, &internal.DualisClaims{
 		StudentID:     studentId,
 		StudentCourse: courseFk,
+		Organization:  orgId,
 		StandardClaims: jwt.StandardClaims{
 			Subject:   email,
 			Issuer:    "dualis-microservice",

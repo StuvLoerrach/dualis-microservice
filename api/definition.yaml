@@ -108,7 +108,7 @@ paths:
           schema:
             $ref: "#/definitions/RelativePerformance"
         204:
-          description: "The enrollmentId doesn't exist or has no corresponding module!"
+          description: "The enrollmentId doesn't exist, has no corresponding module or hasn't been evaluated yet!"
         500:
           description: "Couldn't get relative module performance!"
           schema:

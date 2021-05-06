@@ -29,7 +29,6 @@ func HandleStudentPerformance(params operations.StudentPerformanceParams, princi
 		year             string
 	)
 
-	var errMsg *string
 	lectureResults := []*models.LectureResult{}
 	moduleResults := []*models.ModuleResult{}
 	enrollments := []*models.Enrollment{}
@@ -55,11 +54,11 @@ func HandleStudentPerformance(params operations.StudentPerformanceParams, princi
 		values = append(values, *pVal)
 	}
 
-	rows, err := db.Query("SELECT enrollment.id, grade, status, is_wintersemester, year, no, name, credits from dualis.enrollment INNER JOIN dualis.semester ON dualis.enrollment.semester_fk = dualis.semester.id INNER JOIN dualis.module ON dualis.enrollment.module_fk = dualis.module.id WHERE "+strings.Join(where, " AND "), values...)
+	rows, err := db.Query("SELECT enrollment.id, grade, status, is_wintersemester, year, no, name, credits FROM enrollment INNER JOIN semester ON enrollment.semester_fk = semester.id INNER JOIN module ON enrollment.module_fk = module.id WHERE "+strings.Join(where, " AND "), values...)
 
 	if err != nil {
-		*errMsg = err.Error()
-		return operations.NewStudentsInternalServerError().WithPayload(&models.SimpleError{Error: errMsg})
+		errMsg := err.Error()
+		return operations.NewStudentsInternalServerError().WithPayload(&models.SimpleError{Error: &errMsg})
 	}
 
 	defer rows.Close()
@@ -69,8 +68,8 @@ func HandleStudentPerformance(params operations.StudentPerformanceParams, princi
 		err = rows.Scan(&enrollmentId, &enrollmentGrade, &enrollmentStatus, &isWintersemester, &year, &moduleNumber, &moduleName, &moduleCredits)
 
 		if err != nil {
-			*errMsg = err.Error()
-			return operations.NewStudentPerformanceInternalServerError().WithPayload(&models.SimpleError{Error: errMsg})
+			errMsg := err.Error()
+			return operations.NewStudentPerformanceInternalServerError().WithPayload(&models.SimpleError{Error: &errMsg})
 		}
 
 		enrollmentIdVal := enrollmentId
@@ -78,8 +77,8 @@ func HandleStudentPerformance(params operations.StudentPerformanceParams, princi
 		rows2, err := db.Query("SELECT exam_type, lecture_result.grade, name, no, presence, weighting FROM lecture_result INNER JOIN enrollment ON lecture_result.enrollment_fk = enrollment.id INNER JOIN lecture ON lecture_result.lecture_fk = lecture.id WHERE enrollment.id = ?", enrollmentIdVal)
 
 		if err != nil {
-			*errMsg = err.Error()
-			return operations.NewStudentsInternalServerError().WithPayload(&models.SimpleError{Error: errMsg})
+			errMsg := err.Error()
+			return operations.NewStudentsInternalServerError().WithPayload(&models.SimpleError{Error: &errMsg})
 		}
 
 		defer rows2.Close()
@@ -89,8 +88,8 @@ func HandleStudentPerformance(params operations.StudentPerformanceParams, princi
 			err = rows2.Scan(&lectureExamType, &lectureGrade, &lectureName, &lectureNumber, &lecturePresence, &lectureWeighting)
 
 			if err != nil {
-				*errMsg = err.Error()
-				return operations.NewStudentPerformanceInternalServerError().WithPayload(&models.SimpleError{Error: errMsg})
+				errMsg := err.Error()
+				return operations.NewStudentPerformanceInternalServerError().WithPayload(&models.SimpleError{Error: &errMsg})
 			}
 
 			lectureExamTypeVal := lectureExamType
