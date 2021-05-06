@@ -13,6 +13,7 @@ func InitializeHandlers(swaggerSpec *loads.Document) *operations.DualisMicroserv
 	api.LoginHandler = operations.LoginHandlerFunc(endpoint.HandleLogin)
 	api.StudentsHandler = operations.StudentsHandlerFunc(endpoint.HandleStudents)
 	api.StudentPerformanceHandler = operations.StudentPerformanceHandlerFunc(endpoint.HandleStudentPerformance)
+	api.StudentRelativeModulePerformanceHandler = operations.StudentRelativeModulePerformanceHandlerFunc(endpoint.HandleStudentRelativeModulePerformance)
 
 	return api
 }

@@ -55,7 +55,7 @@ func HandleStudentPerformance(params operations.StudentPerformanceParams, princi
 		values = append(values, *pVal)
 	}
 
-	rows, err := db.Query("SELECT enrollment.id, grade, status, is_wintersemester, year, no, name, credits from enrollment INNER JOIN semester ON enrollment.semester_fk = semester.id INNER JOIN module ON enrollment.module_fk = module.id WHERE "+strings.Join(where, " AND "), values...)
+	rows, err := db.Query("SELECT enrollment.id, grade, status, is_wintersemester, year, no, name, credits from dualis.enrollment INNER JOIN dualis.semester ON dualis.enrollment.semester_fk = dualis.semester.id INNER JOIN dualis.module ON dualis.enrollment.module_fk = dualis.module.id WHERE "+strings.Join(where, " AND "), values...)
 
 	if err != nil {
 		*errMsg = err.Error()
@@ -128,6 +128,10 @@ func HandleStudentPerformance(params operations.StudentPerformanceParams, princi
 	}
 
 	performancesList = models.PerformancesList{Enrollments: enrollments}
+
+	if len(enrollments) == 0 {
+		return operations.NewStudentPerformanceNoContent()
+	}
 
 	return operations.NewStudentPerformanceOK().WithPayload(&performancesList)
 
