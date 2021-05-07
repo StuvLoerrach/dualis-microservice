@@ -90,10 +90,10 @@ paths:
             $ref: "#/definitions/SimpleError"
       security:
       - dualis_key: []
-  /student/relative/module/performance/:
+  /student/module/statistics/:
     get:
       summary: "Tells how a student performed in a module relative to his class"
-      operationId: "studentRelativeModulePerformance"
+      operationId: "studentModuleStatistics"
       consumes:
         - application/json
       parameters:
@@ -106,7 +106,7 @@ paths:
         200:
           description: "Got the relative performance in the module successfully!"
           schema:
-            $ref: "#/definitions/RelativePerformance"
+            $ref: "#/definitions/ModuleStatistics"
         204:
           description: "The enrollmentId doesn't exist, has no corresponding module or hasn't been evaluated yet!"
         500:
@@ -220,12 +220,13 @@ definitions:
         items:
           $ref: "#/definitions/Enrollment"
         description: "A list of enrollments"
-  RelativePerformance:
+  ModuleStatistics:
     type: "object"
     required:
       - better
       - equal
       - worse
+      - failureRate
     properties:
       better:
         type: "string"
@@ -236,6 +237,9 @@ definitions:
       worse:
         type: "string"
         description: "Percentage of the students worse than the said student"
+      failureRate:
+        type: "string"
+        description: "Failure rate in percent"
   Student:
     type: "object"
     required:

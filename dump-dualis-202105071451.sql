@@ -63,7 +63,7 @@ CREATE TABLE `enrollment` (
   CONSTRAINT `enrollment_FK` FOREIGN KEY (`module_fk`) REFERENCES `module` (`id`),
   CONSTRAINT `enrollment_FK_1` FOREIGN KEY (`semester_fk`) REFERENCES `semester` (`id`),
   CONSTRAINT `enrollment_FK_2` FOREIGN KEY (`student_fk`) REFERENCES `student` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -72,7 +72,7 @@ CREATE TABLE `enrollment` (
 
 LOCK TABLES `enrollment` WRITE;
 /*!40000 ALTER TABLE `enrollment` DISABLE KEYS */;
-INSERT INTO `enrollment` VALUES (1,'2,0','bestanden',1,1,4),(2,'1,8','bestanden',2,3,4),(3,'noch nicht gesetzt','',3,6,4),(4,'2,2','bestanden',3,7,4),(5,'2,0','bestanden',2,3,3),(6,'1,4','bestanden',2,3,5);
+INSERT INTO `enrollment` VALUES (1,'2,0','bestanden',1,1,4),(2,'1,8','bestanden',2,3,4),(3,'noch nicht gesetzt','',3,6,4),(4,'2,2','bestanden',3,7,4),(5,'2,0','bestanden',2,3,3),(6,'1,4','bestanden',2,3,5),(7,'4,3','nicht bestanden',2,3,6);
 /*!40000 ALTER TABLE `enrollment` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -124,7 +124,7 @@ CREATE TABLE `lecture_result` (
   KEY `lecture_result_FK_1` (`lecture_fk`),
   CONSTRAINT `lecture_result_FK` FOREIGN KEY (`enrollment_fk`) REFERENCES `enrollment` (`id`),
   CONSTRAINT `lecture_result_FK_1` FOREIGN KEY (`lecture_fk`) REFERENCES `lecture` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -133,7 +133,7 @@ CREATE TABLE `lecture_result` (
 
 LOCK TABLES `lecture_result` WRITE;
 /*!40000 ALTER TABLE `lecture_result` DISABLE KEYS */;
-INSERT INTO `lecture_result` VALUES (1,'85,2',1,1,1),(2,'75,0',1,1,2),(3,'71,4',1,1,3),(4,'1,7',1,2,4),(5,'1,9',1,2,5),(6,'2,0',1,3,6),(7,'2,4',1,4,7),(8,'1,9',1,5,4),(9,'2,1',1,5,5),(10,'1,2',1,6,4),(11,'1,6',1,6,5);
+INSERT INTO `lecture_result` VALUES (1,'85,2',1,1,1),(2,'75,0',1,1,2),(3,'71,4',1,1,3),(4,'1,7',1,2,4),(5,'1,9',1,2,5),(6,'2,0',1,3,6),(7,'2,4',1,4,7),(8,'1,9',1,5,4),(9,'2,1',1,5,5),(10,'1,2',1,6,4),(11,'1,6',1,6,5),(12,'4,0',1,7,4),(13,'4,6',0,7,5);
 /*!40000 ALTER TABLE `lecture_result` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -227,7 +227,7 @@ CREATE TABLE `student` (
   PRIMARY KEY (`id`),
   KEY `student_FK` (`course_fk`),
   CONSTRAINT `student_FK` FOREIGN KEY (`course_fk`) REFERENCES `course` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -236,7 +236,7 @@ CREATE TABLE `student` (
 
 LOCK TABLES `student` WRITE;
 /*!40000 ALTER TABLE `student` DISABLE KEYS */;
-INSERT INTO `student` VALUES (3,'scuderir@dhbw-loerrach.de','euifhff',1),(4,'kaiseand@dhbw-loerrach.de','gopgj',1),(5,'behrends@dhbw-loerrach.de','abcd',2);
+INSERT INTO `student` VALUES (3,'scuderir@dhbw-loerrach.de','euifhff',1),(4,'kaiseand@dhbw-loerrach.de','gopgj',1),(5,'behrends@dhbw-loerrach.de','abcd',2),(6,'peter@dhbw-loerrach.de','1234',1);
 /*!40000 ALTER TABLE `student` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -253,4 +253,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2021-05-06 16:04:18
+-- Dump completed on 2021-05-07 14:51:07

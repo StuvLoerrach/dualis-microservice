@@ -10,7 +10,7 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 )
 
-func HandleStudentRelativeModulePerformance(params operations.StudentRelativeModulePerformanceParams, principal interface{}) middleware.Responder {
+func HandleStudentModuleStatistics(params operations.StudentModuleStatisticsParams, principal interface{}) middleware.Responder {
 
 	var (
 		studentIdDB      int64
@@ -19,9 +19,10 @@ func HandleStudentRelativeModulePerformance(params operations.StudentRelativeMod
 		semesterFK       int64
 		moduleFK         int64
 		currentGrade     float32
+		amountFailures   int64
 	)
 
-	relativePerformance := models.RelativePerformance{}
+	relativePerformance := models.ModuleStatistics{}
 	betterGrades := []float32{}
 	equalGrades := []float32{}
 	worseGrades := []float32{}
@@ -30,7 +31,7 @@ func HandleStudentRelativeModulePerformance(params operations.StudentRelativeMod
 
 	if err != nil {
 		errMsg := err.Error()
-		return operations.NewStudentRelativeModulePerformanceInternalServerError().WithPayload(&models.SimpleError{Error: &errMsg})
+		return operations.NewStudentModuleStatisticsInternalServerError().WithPayload(&models.SimpleError{Error: &errMsg})
 	}
 
 	defer rows.Close()
@@ -43,25 +44,25 @@ func HandleStudentRelativeModulePerformance(params operations.StudentRelativeMod
 
 		if err != nil {
 			errMsg := err.Error()
-			return operations.NewStudentRelativeModulePerformanceInternalServerError().WithPayload(&models.SimpleError{Error: &errMsg})
+			return operations.NewStudentModuleStatisticsInternalServerError().WithPayload(&models.SimpleError{Error: &errMsg})
 		}
 
 		value, err := strconv.ParseFloat(moduleGrade, 32)
 		if err != nil {
-			return operations.NewStudentRelativeModulePerformanceNoContent()
+			return operations.NewStudentModuleStatisticsNoContent()
 		}
 		moduleGradeFloat = float32(value)
 	}
 
 	if !entered {
-		return operations.NewStudentRelativeModulePerformanceNoContent()
+		return operations.NewStudentModuleStatisticsNoContent()
 	}
 
 	claims := principal.(*internal.DualisClaims)
 
 	if studentIdDB != claims.StudentID {
 		unauthorized := "The studentId which belongs to this enrollment is not yours!"
-		return operations.NewStudentRelativeModulePerformanceInternalServerError().WithPayload(&models.SimpleError{Error: &unauthorized})
+		return operations.NewStudentModuleStatisticsInternalServerError().WithPayload(&models.SimpleError{Error: &unauthorized})
 	}
 
 	//rows2, err := db.Query("SELECT CAST(REPLACE(grade, ',', '.') AS double) AS grades FROM enrollment WHERE semester_fk = ? and module_fk = ?", semesterFK, moduleFK)
@@ -69,7 +70,7 @@ func HandleStudentRelativeModulePerformance(params operations.StudentRelativeMod
 
 	if err != nil {
 		errMsg := err.Error()
-		return operations.NewStudentRelativeModulePerformanceInternalServerError().WithPayload(&models.SimpleError{Error: &errMsg})
+		return operations.NewStudentModuleStatisticsInternalServerError().WithPayload(&models.SimpleError{Error: &errMsg})
 	}
 
 	defer rows2.Close()
@@ -79,7 +80,7 @@ func HandleStudentRelativeModulePerformance(params operations.StudentRelativeMod
 
 		if err != nil {
 			errMsg := err.Error()
-			return operations.NewStudentRelativeModulePerformanceInternalServerError().WithPayload(&models.SimpleError{Error: &errMsg})
+			return operations.NewStudentModuleStatisticsInternalServerError().WithPayload(&models.SimpleError{Error: &errMsg})
 		}
 
 		currentGradeVal := currentGrade
@@ -93,16 +94,21 @@ func HandleStudentRelativeModulePerformance(params operations.StudentRelativeMod
 			worseGrades = append(worseGrades, currentGradeVal)
 		}
 
+		if currentGradeVal > 4.0 {
+			amountFailures++
+		}
+
 	}
 
 	gradeCount := len(betterGrades) + len(equalGrades) + len(worseGrades)
 
-	better := fmt.Sprintf("%v%%", (float32(len(betterGrades))/float32(gradeCount))*100)
-	equal := fmt.Sprintf("%v%%", (float32(len(equalGrades))/float32(gradeCount))*100)
-	worse := fmt.Sprintf("%v%%", (float32(len(worseGrades))/float32(gradeCount))*100)
+	better := fmt.Sprintf("%.2f%%", (float32(len(betterGrades))/float32(gradeCount-1))*100)
+	equal := fmt.Sprintf("%.2f%%", (float32(len(equalGrades)-1)/float32(gradeCount-1))*100)
+	worse := fmt.Sprintf("%.2f%%", (float32(len(worseGrades))/float32(gradeCount-1))*100)
+	failureRate := fmt.Sprintf("%.2f%%", (float32(amountFailures)/float32(gradeCount))*100)
 
-	relativePerformance = models.RelativePerformance{Better: &better, Equal: &equal, Worse: &worse}
+	relativePerformance = models.ModuleStatistics{Better: &better, Equal: &equal, Worse: &worse, FailureRate: &failureRate}
 
-	return operations.NewStudentRelativeModulePerformanceOK().WithPayload(&relativePerformance)
+	return operations.NewStudentModuleStatisticsOK().WithPayload(&relativePerformance)
 
 }
