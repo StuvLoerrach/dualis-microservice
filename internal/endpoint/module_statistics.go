@@ -27,7 +27,7 @@ func HandleStudentModuleStatistics(params operations.StudentModuleStatisticsPara
 	equalGrades := []float32{}
 	worseGrades := []float32{}
 
-	rows, err := db.Query("SELECT student.id, REPLACE(grade, ',', '.') as grade, semester_fk, module_fk FROM dualis.enrollment INNER JOIN dualis.student ON dualis.enrollment.student_fk = dualis.student.id WHERE dualis.enrollment.id = ?", *params.EnrollmentID)
+	rows, err := db.Query("SELECT student.id, REPLACE(grade, ',', '.') as grade, semester_fk, module_fk FROM dualis.enrollment INNER JOIN dualis.student ON dualis.enrollment.student_fk = dualis.student.id WHERE dualis.enrollment.id = ?", params.EnrollmentID)
 
 	if err != nil {
 		errMsg := err.Error()
