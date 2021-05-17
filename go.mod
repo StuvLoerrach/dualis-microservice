@@ -24,6 +24,7 @@ require (
 	github.com/peterh/liner v1.2.1 // indirect
 	github.com/pkg/profile v0.0.0-20170413231811-06b906832ed0 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
+	github.com/rs/cors v1.7.0 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	go.mongodb.org/mongo-driver v1.5.2 // indirect

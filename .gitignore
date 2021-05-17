@@ -16,5 +16,8 @@
 
 cmd/cmd
 
-internal/api/
+internal/api/*
+!internal/api/restapi
+internal/api/restapi/*
+!internal/api/restapi/configure_dualis_microservice.go
 internal/settings.json
