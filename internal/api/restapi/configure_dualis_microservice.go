@@ -97,7 +97,7 @@ func setupMiddlewares(handler http.Handler) http.Handler {
 func setupGlobalMiddleware(handler http.Handler) http.Handler {
 	c := cors.New(cors.Options{
 		Debug:          false,
-		AllowedHeaders: []string{"Content-Type", "Accept"},
+		AllowedHeaders: []string{"Content-Type", "Accept", "Authorization", "x-api-key"},
 		AllowedOrigins: []string{"*"},
 		AllowedMethods: []string{"POST", "GET", "OPTIONS", "PUT", "DELETE"},
 		MaxAge:         1000,

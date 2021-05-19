@@ -144,10 +144,14 @@ definitions:
   Enrollment:
     type: "object"
     required:
+      - id
       - status
       - semester
       - moduleResult
     properties:
+      id:
+        type: "integer"
+        description: "Id of the enrollment"
       grade:
         type: "string"
         description: "Grade of the student for this module"

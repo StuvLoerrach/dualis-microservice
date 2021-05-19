@@ -122,7 +122,7 @@ func HandleStudentPerformance(params operations.StudentPerformanceParams, princi
 			semester = "SoSe " + yearVal
 		}
 
-		enrollments = append(enrollments, &models.Enrollment{Grade: enrollmentGradeVal, ModuleResult: moduleResults, Semester: &semester, Status: &enrollmentStatusVal})
+		enrollments = append(enrollments, &models.Enrollment{ID: &enrollmentIdVal, Grade: enrollmentGradeVal, ModuleResult: moduleResults, Semester: &semester, Status: &enrollmentStatusVal})
 		moduleResults = nil
 	}
 
