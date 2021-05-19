@@ -13,18 +13,6 @@ import (
 func HandleStudentPerformance(params operations.StudentPerformanceParams, principal interface{}) middleware.Responder {
 
 	var (
-		enrollmentId     int64
-		enrollmentGrade  string
-		enrollmentStatus string
-		lectureExamType  string
-		lectureGrade     string
-		lectureName      string
-		lectureNumber    string
-		lecturePresence  bool
-		lectureWeighting string
-		moduleName       string
-		moduleNumber     string
-		moduleCredits    string
 		isWintersemester bool
 		year             string
 	)
@@ -65,16 +53,17 @@ func HandleStudentPerformance(params operations.StudentPerformanceParams, princi
 
 	for rows.Next() {
 
-		err = rows.Scan(&enrollmentId, &enrollmentGrade, &enrollmentStatus, &isWintersemester, &year, &moduleNumber, &moduleName, &moduleCredits)
+		var enrollment models.Enrollment
+		var moduleResult models.ModuleResult
+
+		err = rows.Scan(&enrollment.ID, &enrollment.Grade, &enrollment.Status, &isWintersemester, &year, &moduleResult.Number, &moduleResult.Name, &moduleResult.Credits)
 
 		if err != nil {
 			errMsg := err.Error()
 			return operations.NewStudentPerformanceInternalServerError().WithPayload(&models.SimpleError{Error: &errMsg})
 		}
 
-		enrollmentIdVal := enrollmentId
-
-		rows2, err := db.Query("SELECT exam_type, lecture_result.grade, name, no, presence, weighting FROM lecture_result INNER JOIN enrollment ON lecture_result.enrollment_fk = enrollment.id INNER JOIN lecture ON lecture_result.lecture_fk = lecture.id WHERE enrollment.id = ?", enrollmentIdVal)
+		rows2, err := db.Query("SELECT exam_type, lecture_result.grade, name, no, presence, weighting FROM lecture_result INNER JOIN enrollment ON lecture_result.enrollment_fk = enrollment.id INNER JOIN lecture ON lecture_result.lecture_fk = lecture.id WHERE enrollment.id = ?", *enrollment.ID)
 
 		if err != nil {
 			errMsg := err.Error()
@@ -85,32 +74,23 @@ func HandleStudentPerformance(params operations.StudentPerformanceParams, princi
 
 		for rows2.Next() {
 
-			err = rows2.Scan(&lectureExamType, &lectureGrade, &lectureName, &lectureNumber, &lecturePresence, &lectureWeighting)
+			var lectureResult models.LectureResult
+
+			err = rows2.Scan(&lectureResult.ExamType, &lectureResult.Grade, &lectureResult.Name, &lectureResult.Number, &lectureResult.Presence, &lectureResult.Weighting)
 
 			if err != nil {
 				errMsg := err.Error()
 				return operations.NewStudentPerformanceInternalServerError().WithPayload(&models.SimpleError{Error: &errMsg})
 			}
 
-			lectureExamTypeVal := lectureExamType
-			lectureGradeVal := lectureGrade
-			lectureNameVal := lectureName
-			lectureNumberVal := lectureNumber
-			lecturePresenceVal := lecturePresence
-			lectureWeightingVal := lectureWeighting
-
-			lectureResults = append(lectureResults, &models.LectureResult{ExamType: &lectureExamTypeVal, Grade: lectureGradeVal, Name: &lectureNameVal, Number: &lectureNumberVal, Presence: lecturePresenceVal, Weighting: &lectureWeightingVal})
+			lectureResults = append(lectureResults, &lectureResult)
 		}
 
-		moduleCreditsVal := moduleCredits
-		moduleNameVal := moduleName
-		moduleNumberVal := moduleNumber
+		moduleResult.LectureResults = lectureResults
 
-		moduleResults = append(moduleResults, &models.ModuleResult{Credits: &moduleCreditsVal, LectureResults: lectureResults, Name: &moduleNameVal, Number: &moduleNumberVal})
+		moduleResults = append(moduleResults, &moduleResult)
 		lectureResults = nil
 
-		enrollmentGradeVal := enrollmentGrade
-		enrollmentStatusVal := enrollmentStatus
 		isWintersemesterVal := isWintersemester
 		yearVal := year
 
@@ -122,7 +102,10 @@ func HandleStudentPerformance(params operations.StudentPerformanceParams, princi
 			semester = "SoSe " + yearVal
 		}
 
-		enrollments = append(enrollments, &models.Enrollment{ID: &enrollmentIdVal, Grade: enrollmentGradeVal, ModuleResult: moduleResults, Semester: &semester, Status: &enrollmentStatusVal})
+		enrollment.Semester = &semester
+		enrollment.ModuleResult = moduleResults
+
+		enrollments = append(enrollments, &enrollment)
 		moduleResults = nil
 	}
 
