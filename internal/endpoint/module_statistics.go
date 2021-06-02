@@ -102,15 +102,15 @@ func HandleStudentModuleStatistics(params operations.StudentModuleStatisticsPara
 
 	gradeCount := len(betterGrades) + len(equalGrades) + len(worseGrades)
 
-	better := "0%"
-	equal := "0%"
-	worse := "0%"
-	failureRate := fmt.Sprintf("%.2f%%", (float32(amountFailures)/float32(gradeCount))*100)
+	better := "0"
+	equal := "0"
+	worse := "0"
+	failureRate := fmt.Sprintf("%.2f", (float32(amountFailures)/float32(gradeCount))*100)
 
 	if gradeCount > 1 {
-		better = fmt.Sprintf("%.2f%%", (float32(len(betterGrades))/float32(gradeCount-1))*100)
-		equal = fmt.Sprintf("%.2f%%", (float32(len(equalGrades)-1)/float32(gradeCount-1))*100)
-		worse = fmt.Sprintf("%.2f%%", (float32(len(worseGrades))/float32(gradeCount-1))*100)
+		better = fmt.Sprintf("%.2f", (float32(len(betterGrades))/float32(gradeCount-1))*100)
+		equal = fmt.Sprintf("%.2f", (float32(len(equalGrades)-1)/float32(gradeCount-1))*100)
+		worse = fmt.Sprintf("%.2f", (float32(len(worseGrades))/float32(gradeCount-1))*100)
 	}
 
 	relativePerformance = models.ModuleStatistics{Better: &better, Equal: &equal, Worse: &worse, FailureRate: &failureRate}
